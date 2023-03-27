@@ -8,7 +8,8 @@
                 <th>Foto</th>
                 <th>Nomor Induk</th>
                 <th>Nama</th>
-                <th>Alamat</th>
+                <th>Email</th>
+                <th>Company</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -22,7 +23,8 @@
                     </td>
                     <td>{{ $item->nomor_induk }}</td>
                     <td>{{ $item->nama }}</td>
-                    <td>{{ $item->alamat }}</td>
+                    <td>{{ $item->email }}</td>
+                    <td>{{ $item->companies}}</td>
                     <td>
                         <a class='btn btn-secondary btn-sm' href='{{ url('/siswa/'.$item->nomor_induk) }}'>Detail</a>
                         <a class='btn btn-warning btn-sm' href='{{ url('/siswa/'.$item->nomor_induk.'/edit') }}'>Edit</a>

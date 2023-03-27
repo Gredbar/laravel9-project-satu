@@ -13,8 +13,8 @@
             <input type="text" class="form-control" name='nama' id="nama" value="{{ $data->nama }}">
         </div>
         <div class="mb-3">
-            <label for="alamat" class="form-label">Alamat</label>
-            <textarea class="form-control" name="alamat">{{ $data->alamat }}</textarea>
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" name="email" value=" {{$data->email}}">
         </div>
         @if ($data->foto)
             <div class="mb-3">

@@ -1,14 +1,14 @@
 @extends('layout/aplikasi')
 
 @section('konten')
-    <form method="post" action="/siswa" enctype="multipart/form-data">
+    <form method="post" action="/companies" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
-            <label for="nomor_induk" class="form-label">Nomor Induk</label>
-            <input type="text" class="form-control" name='nomor_induk' id="nomor_induk" value="{{ Session::get('nomor_induk')}}">
+            <label for="id" class="form-label">Id Company</label>
+            <input type="id" class="form-control" name='id' id="id" value="{{ Session::get('id')}}">
         </div>
         <div class="mb-3">
-            <label for="nama" class="form-label">Nama</label>
+            <label for="nama" class="form-label">Nama Company</label>
             <input type="text" class="form-control" name='nama' id="nama" value="{{ Session::get('nama')}}">
         </div>
         <div class="mb-3">
@@ -16,14 +16,8 @@
             <input type="email" class="form-control" name="email" value="{{ Session::get('email')}}">
         </div>
         <div class="mb-3">
-            <label for="companies" class="form-label">Company</label>
-            <select type="text" class="form-control" name="companies">
-                <option value="">-- Pilih --</option>
-                @foreach ($companies as $item)
-                <option value="{{$item->nama}}"> {{$item->nama}} </option>
-                @endforeach
-
-            </select>
+            <label for="website" class="form-label">Website</label>
+            <input type="website" class="form-control" name="website" value="{{ Session::get('website')}}">
         </div>
         <div class="mb-3">
             <label for="foto" class="form-label">Foto</label>

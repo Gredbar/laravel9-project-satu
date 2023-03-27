@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\company;
-use App\Models\siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 
-class SiswaController extends Controller
+class CompaniesController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,8 +16,8 @@ class SiswaController extends Controller
      */
     public function index()
     {
-        $data = siswa::orderBy('nomor_induk', 'desc')->paginate(5);
-        return view('siswa/index')->with('data', $data);
+        $companies = company::orderBy('id', 'desc')->paginate(5);
+        return view('companies/index')->with('companies', $companies);
     }
 
     /**
@@ -28,8 +27,7 @@ class SiswaController extends Controller
      */
     public function create()
     {
-        $companies=company::all();
-        return view('siswa/create', compact('companies'));
+        return view('companies/create');
     }
 
     /**
@@ -40,23 +38,23 @@ class SiswaController extends Controller
      */
     public function store(Request $request)
     {
-        Session::flash('nomor_induk', $request->nomor_induk);
+        Session::flash('id', $request->id);
         Session::flash('nama', $request->nama);
         Session::flash('email', $request->email);
-        Session::flash('companies', $request->companies);
+        Session::flash('website', $request->website);
 
         $request->validate([
-            'nomor_induk' => 'required|numeric',
+            'id' => 'required|numeric',
             'nama' => 'required',
             'email' => 'required',
-            'companies' => 'required',
+            'website' => 'required',
             'foto' => 'required|mimes:jpeg,jpg,png,gif'
         ], [
-            'nomor_induk.required' => 'Nomor induk wajib diisi',
-            'nomor_induk.numeric' => 'Nomor induk wajib diisi dalam angka',
+            'id.required' => 'Nomor induk wajib diisi',
+            'id.numeric' => 'Nomor induk wajib diisi dalam angka',
             'nama.required' => 'Nama wajib diisi',
             'email.required' => 'Email wajib diisi',
-            'companies.required' => 'Company wajib diisi',
+            'website.required' => 'Website wajib diisi',
             'foto.required' => 'Silakan masukkan foto',
             'foto.mimes' => 'Foto hanya diperbolehkan berekstensi JPEG, JPG, PNG, dan GIF'
         ]);
@@ -64,17 +62,17 @@ class SiswaController extends Controller
         $foto_file = $request->file('foto');
         $foto_ekstensi = $foto_file->extension();
         $foto_nama = date('ymdhis') . "." . $foto_ekstensi;
-        $foto_file->move(public_path('foto'), $foto_nama);
+        $foto_file->move(storage_path('app/public/company'), $foto_nama);
 
-        $data = [
-            'nomor_induk' => $request->input('nomor_induk'),
+        $companies = [
+            'id' => $request->input('id'),
             'nama' => $request->input('nama'),
             'email' => $request->input('email'),
-            'companies' => $request->input('companies'),
+            'website' => $request->input('website'),
             'foto' => $foto_nama
         ];
-        siswa::create($data);
-        return redirect('siswa')->with('success', 'Berhasil memasukkan data');
+        company::create($companies);
+        return redirect('companies')->with('success', 'Berhasil memasukkan data');
     }
 
     /**
@@ -85,8 +83,8 @@ class SiswaController extends Controller
      */
     public function show($id)
     {
-        $data = siswa::where('nomor_induk', $id)->first();
-        return view('siswa/show')->with('data', $data);
+        $companies = company::where('id', $id)->first();
+        return view('companies/show')->with('companies', $companies);
     }
 
     /**
@@ -97,8 +95,8 @@ class SiswaController extends Controller
      */
     public function edit($id)
     {
-        $data = siswa::where('nomor_induk', $id)->first();
-        return view('siswa/edit')->with('data', $data);
+        $companies = company::where('id', $id)->first();
+        return view('companies/edit')->with('companies', $companies);
     }
 
     /**
@@ -112,16 +110,19 @@ class SiswaController extends Controller
     {
         $request->validate([
             'nama' => 'required',
-            'email' => 'required'
+            'email' => 'required',
+            'website' => 'required'
         ], [
-            'nomor_induk.numeric' => 'Nomor induk wajib diisi dalam angka',
+            'id.numeric' => 'Id wajib diisi dalam angka',
             'nama.required' => 'Nama wajib diisi',
             'email.required' => 'Email wajib diisi',
+            'website.required' => 'website wajib diisi',
         ]);
 
-        $data = [
+        $companies = [
             'nama' => $request->input('nama'),
             'email' => $request->input('email'),
+            'website' => $request->input('website'),
         ];
 
         if ($request->hasFile('foto')) {
@@ -133,19 +134,19 @@ class SiswaController extends Controller
             $foto_file = $request->file('foto');
             $foto_ekstensi = $foto_file->extension();
             $foto_nama = date('ymdhis') . "." . $foto_ekstensi;
-            $foto_file->move(public_path('foto'), $foto_nama); //sudah terupload ke direktori
+            $foto_file->move(storage_path('app/public/company'), $foto_nama); //sudah terupload ke direktori
 
-            $data_foto = siswa::where('nomor_induk', $id)->first();
-            File::delete(public_path('foto') . '/' . $data_foto->foto);
+            $companies_foto = company::where('id', $id)->first();
+            File::delete(storage_path('app/public/company') . '/' . $companies_foto->foto);
 
             // $data = [
             //     'foto' => $foto_nama
             // ];
-            $data['foto'] = $foto_nama;
+            $companies['foto'] = $foto_nama;
         }
 
-        siswa::where('nomor_induk', $id)->update($data);
-        return redirect('/siswa')->with('success', 'Berhasil melakukan update data');
+        company::where('id', $id)->update($companies);
+        return redirect('/companies')->with('success', 'Berhasil melakukan update data');
     }
 
     /**
@@ -156,10 +157,10 @@ class SiswaController extends Controller
      */
     public function destroy($id)
     {
-        $data = siswa::where('nomor_induk', $id)->first();
-        File::delete(public_path('foto') . '/' . $data->foto);
+        $companies = company::where('id', $id)->first();
+        File::delete(storage_path('app/public/company') . '/' . $companies->foto);
 
-        siswa::where('nomor_induk', $id)->delete();
-        return redirect('/siswa')->with('success', 'Berhasil hapus data');
+        company::where('id', $id)->delete();
+        return redirect('/companies')->with('success', 'Berhasil hapus data');
     }
 }

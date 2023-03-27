@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\CompaniesController;
 use App\Http\Controllers\HalamanController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SiswaController;
 use Illuminate\Contracts\Session\Session;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/foo', function () {
+    Artisan::call('storage:link');
+    });
 
 
 
@@ -25,6 +30,7 @@ Route::get('/kontak', [HalamanController::class, 'kontak']);
 Route::get('/tentang', [HalamanController::class, 'tentang']);
 
 Route::resource('siswa', SiswaController::class)->middleware('isLogin');
+Route::resource('companies', CompaniesController::class);
 
 Route::get('/sesi', [SessionController::class, 'index'])->middleware('isTamu');
 Route::post('/sesi/login', [SessionController::class, 'login'])->middleware('isTamu');
